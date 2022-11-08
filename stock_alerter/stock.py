@@ -22,19 +22,66 @@ class Stock:
 
     @property
     def price(self):
+        """Returns the current price of the Stock
+        >>> from datetime import datetime
+        >>> stock = Stock("GOOG")
+        >>> stock.update(datetime(2011, 10, 3), 10)
+        >>> stock.price
+        10
+
+        The method will return the latest price by timestamp, so even if
+        updates are out of order, it will return the latest one
+        >>> stock = Stock("GOOG")
+        >>> stock.update(datetime(2011, 10, 3), 10)
+
+        Now, let us do an update with a date that is earlier than the previous
+        one
+        >>> stock.update(datetime(2011, 10, 2), 5)
+
+        And the method still returns the latest price
+        >>> stock.price
+        10
+
+        If there are no updates, then the method returns None
+        >>> stock = Stock("GOOG")
+        >>> print(stock.price)
+        None
+        """
         try:
             return self.history[-1].value
         except IndexError:
             return None
 
     def update(self, timestamp, price):
+        """Updates the stock with the price at the given timestamp
+        >>> from datetime import datetime
+        >>> stock = Stock("GOOG")
+        >>> stock.update(datetime(2014, 10, 2), 10)
+        >>> stock.price
+        10
+
+        The method raises a ValueError exception if the price is negative
+        >>> stock.update(datetime(2014, 10, 2), -1)
+        Traceback (most recent call last):
+            ...
+        ValueError: price should not be negative
+        """
         if price < 0:
             raise ValueError("price should not be negative")
         self.history.update(timestamp, price)
         self.updated.fire(self)
 
     def is_increasing_trend(self):
-        return self.history[-3].value < self.history[-2].value < self.history[-1].value
+        """
+        Returns True if the past three values have been strictly increasing
+        Returns False if there have been less than three updates so far
+        >>> stock.is_increasing_trend()
+        False
+        """
+        try:
+            return self.history[-3].value < self.history[-2].value < self.history[-1].value
+        except IndexError:
+            return False
 
     def _is_crossover_below_to_above(self, on_date, ma, reference_ma):
         prev_date = on_date - timedelta(1)
@@ -54,3 +101,8 @@ class Stock:
             return StockSignal.neutral
 
         return StockSignal.neutral
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

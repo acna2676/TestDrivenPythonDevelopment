@@ -13,7 +13,6 @@ class Alert:
         self.exchange = exchange
         dependent_stocks = self.rule.depends_on()
         for stock in dependent_stocks:
-            print("exchange[stock] = ", exchange[stock])
             exchange[stock].updated.connect(self.check_rule)
 
     def check_rule(self, stock):

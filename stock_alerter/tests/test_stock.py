@@ -112,8 +112,6 @@ class StockCrossOverSignalTest(unittest.TestCase):
     def test_stock_with_no_data_returns_neutral(self):
         date_to_check = datetime(2014, 2, 13)
         self.given_a_series_of_prices([])
-        print("22222222222222222222    ", StockSignal.neutral,
-              self.goog.get_crossover_signal(date_to_check))
         self.assertEqual(StockSignal.neutral,
                          self.goog.get_crossover_signal(date_to_check))
 
