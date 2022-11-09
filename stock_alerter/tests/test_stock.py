@@ -1,57 +1,160 @@
 # exec command: python -m unittest discover -s ../../stock_alerter -t ../../stock_alerter *プロジェクトルートディレクトリとtestsディレクトリに__init__.pyも必要
+# exec cimmand with nose2: nose2  -t ../../stock_alerter --plugin nose2.plugins.layers (--layer-reporter -v)
+# exec command: per each modules: python -m unittest discover -s ../../stock_alerter -t ../../stock_alerter tests.test_stock
 import collections
 import unittest
 from datetime import datetime, timedelta
 
+# from nose2.tools import such
+# from nose2.tools.params import params
 from stock import Stock, StockSignal
 
+# def setup_test():
+#     global goog
+#     goog = Stock("GOOG")
 
-class StockTest(unittest.TestCase):
-    def setUp(self):
-        self.goog = Stock("GOOG")
 
-    def test_price_of_a_new_stock_class_should_be_None(self):
-        self.assertIsNone(self.goog.price)
+# def teardown_test():
+#     global goog
+#     goog = None
 
-    def test_stock_update(self):
-        """An update should set the price on the
-        stock object
-        We will be using the `datetime` module
-        for the timestamp """
-        self.goog.update(datetime(2014, 2, 12), price=10)
-        self.assertEqual(10, self.goog.price)
 
-    def test_negative_price_should_throw_ValueError(self):
-        with self.assertRaises(ValueError):
-            self.goog.update(datetime(2014, 2, 13), -1)
+# def test_price_of_a_new_stock_class_should_be_None():
+#     assert goog.price is None, "Price of a newstock should be None"
 
-    def test_stock_price_should_give_the_latest_price(self):
-        self.goog.update(datetime(2014, 2, 12), price=10)
-        self.goog.update(datetime(2014, 2, 13), price=8.4)
-        self.assertAlmostEqual(8.4, self.goog.price, delta=0.0001)
+
+# test_price_of_a_new_stock_class_should_be_None.setup = setup_test
+# test_price_of_a_new_stock_class_should_be_None.teardown = teardown_test
+
+
+# def given_a_series_of_prices(stock, prices):
+#     timestamps = [datetime(2014, 2, 10), datetime(2014, 2, 11),
+#                   datetime(2014, 2, 12), datetime(2014, 2, 13)]
+#     for timestamp, price in zip(timestamps, prices):
+#         stock.update(timestamp, price)
+
+
+# @params(
+#     ([8, 10, 12], True),
+#     ([8, 12, 10], False),
+#     ([8, 10, 10], False)
+# )
+# def test_stock_trends(prices, expected_output):
+#     goog = Stock("GOOG")
+#     given_a_series_of_prices(goog, prices)
+#     assert goog.is_increasing_trend() == expected_output
+
+
+# def test_trend_with_all_consecutive_values_upto_100():
+#     for i in range(100):
+#         yield stock_trends_with_consecutive_prices, [i, i+1, i+2]
+
+
+# def stock_trends_with_consecutive_prices(prices):
+#     goog = Stock("GOOG")
+#     given_a_series_of_prices(goog, prices)
+#     assert goog.is_increasing_trend()
+
+
+# with such.A("Stock class") as it:
+
+#     @it.has_setup
+#     def setup():
+#         it.goog = Stock("GOOG")
+
+#     with it.having("a price method"):
+#         @it.has_setup
+#         def setup():
+#             it.goog.update(datetime(2014, 2, 12), price=10)
+
+#         @it.should("return the price")
+#         def test(case):
+#             assert it.goog.price == 10
+
+#         @it.should("return the latest price")
+#         def test(case):
+#             it.goog.update(datetime(2014, 2, 11), price=15)
+#             assert it.goog.price == 10
+
+#     with it.having("a trend method"):
+#         @it.should("return True if the last three updates were increasing")
+#         def test(case):
+#             it.goog.update(datetime(2014, 2, 11), price=12)
+#             it.goog.update(datetime(2014, 2, 12), price=13)
+#             it.goog.update(datetime(2014, 2, 13), price=14)
+#             assert it.goog.is_increasing_trend()
+
+#     it.createTests(globals())
+
+
+# class StockTest(unittest.TestCase):
+#     def setUp(self):
+#         self.goog = Stock("GOOG")
+
+#     def test_price_of_a_new_stock_class_should_be_None(self):
+#         self.assertIsNone(self.goog.price)
+
+#     def test_stock_update(self):
+#         """An update should set the price on the
+#         stock object
+#         We will be using the `datetime` module
+#         for the timestamp """
+#         self.goog.update(datetime(2014, 2, 12), price=10)
+#         self.assertEqual(10, self.goog.price)
+
+#     def test_negative_price_should_throw_ValueError(self):
+#         with self.assertRaises(ValueError):
+#             self.goog.update(datetime(2014, 2, 13), -1)
+
+#     def test_stock_price_should_give_the_latest_price(self):
+#         self.goog.update(datetime(2014, 2, 12), price=10)
+#         self.goog.update(datetime(2014, 2, 13), price=8.4)
+#         self.assertAlmostEqual(8.4, self.goog.price, delta=0.0001)
+
+
+# class StockTrendTest(unittest.TestCase):
 
 
 class StockTrendTest(unittest.TestCase):
     def setUp(self):
         self.goog = Stock("GOOG")
 
-    def given_a_series_of_prices(self, prices):
-        timestamps = [datetime(2014, 2, 10), datetime(2014, 2, 11), datetime(2014, 2, 12),
-                      datetime(2014, 2, 13)]
+    # def given_a_series_of_prices(self, prices):
+    #     timestamps = [datetime(2014, 2, 10), datetime(2014, 2, 11), datetime(2014, 2, 12),
+    #                   datetime(2014, 2, 13)]
+    #     for timestamp, price in zip(timestamps, prices):
+    #         self.goog.update(timestamp, price)
+
+    def given_a_series_of_prices(self, stock, prices):
+        timestamps = [datetime(2014, 2, 10), datetime(2014, 2, 11),
+                      datetime(2014, 2, 12), datetime(2014, 2, 13)]
         for timestamp, price in zip(timestamps, prices):
-            self.goog.update(timestamp, price)
+            stock.update(timestamp, price)
 
-    def test_increasing_trend_is_true_if_price_increase_for_3_updates(self):
-        self.given_a_series_of_prices([8, 10, 12])
-        self.assertTrue(self.goog.is_increasing_trend())
+    def test_stock_trends(self):
+        dataset = [
+            ([8, 10, 12], True),
+            ([8, 12, 10], True),
+            ([8, 10, 10], True)
+        ]
+        for data in dataset:
+            prices, output = data
+            with self.subTest(prices=prices, output=output):
+                goog = Stock("GOOG")
+                self.given_a_series_of_prices(goog, prices)
+                self.assertEqual(output, goog.is_increasing_trend())
 
-    def test_increasing_trend_is_false_if_price_decreases(self):
-        self.given_a_series_of_prices([8, 12, 10])
-        self.assertFalse(self.goog.is_increasing_trend())
+    # def test_increasing_trend_is_true_if_price_increase_for_3_updates(self):
+    #     self.given_a_series_of_prices([8, 10, 12])
+    #     self.assertTrue(self.goog.is_increasing_trend())
 
-    def test_increasing_trend_is_false_if_price_equal(self):
-        self.given_a_series_of_prices([8, 10, 10])
-        self.assertFalse(self.goog.is_increasing_trend())
+    # def test_increasing_trend_is_false_if_price_decreases(self):
+    #     self.given_a_series_of_prices([8, 12, 10])
+    #     self.assertFalse(self.goog.is_increasing_trend())
+
+    # def test_increasing_trend_is_false_if_price_equal(self):
+    #     self.given_a_series_of_prices([8, 10, 10])
+    #     self.assertFalse(self.goog.is_increasing_trend())
 
 
 class StockCrossOverSignalTest(unittest.TestCase):
